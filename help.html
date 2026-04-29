@@ -460,15 +460,41 @@ footer {
 <section class="slide" id="use-flow">
   <span class="step-num">STEP 3</span>
   <h2>プリンタを<span class="highlight">使う流れ</span></h2>
+
+  <h3>① 待機中のカードに「これを使う」ボタンが出ます</h3>
+  <div class="mockup">
+    <span class="mockup-label">IDLE / READY</span>
+    <div class="mock-card">
+      <div class="mock-head">
+        <div class="mock-name">いっちゃん</div>
+        <span class="state-badge idle">待機</span>
+      </div>
+      <div class="mock-model"><span class="bambu-tag">Bambu</span> P2S</div>
+      <div class="mock-actions">
+        <span class="mock-btn yellow">これを使う</span>
+        <span class="mock-btn sub">状態更新</span>
+      </div>
+    </div>
+  </div>
+  <p class="muted">誰も使っていないプリンタには、黄色の「これを使う」ボタンが表示されます。</p>
+
+  <h3>② 手順</h3>
   <ol>
-    <li><strong>「これを使う」ボタン</strong> を押す（カードが黄色くなり、自分の名前が「USING NOW」スタンプで表示される）</li>
-    <li>Bambu Studio から印刷を送信</li>
+    <li><strong>「これを使う」ボタン</strong> を押す（自分の名前が「USING NOW」スタンプで表示される）</li>
+    <li><strong>自分の PC の Bambu Studio から印刷を送信</strong>
+      <div class="muted" style="margin-top:6px;">
+        Bambu Studio は <strong>これまで通り各自の PC にインストールしたもの</strong>を使ってください。共有アカウントでログインしておけば、どの 5 台にも送信できます。
+      </div>
+      <div class="tip" style="margin-top:8px;">
+        <strong>初回ログインがまだの方</strong> → メール認証コードがないとログインできません。<a href="#twofa" style="color:var(--bambu); text-decoration:underline; font-weight:700;">「8. 2FAコード」を見る ↓</a>
+      </div>
+    </li>
     <li>印刷中はカードが自動でリアルタイム更新（温度・進捗・終了予定時刻）</li>
     <li>印刷終了後、プリンタへ行ってプレートからプリントを剥がす</li>
     <li><strong>「使い終わった」ボタン</strong> を押す → 待機状態に戻る</li>
   </ol>
 
-  <h3>「使用中」マーク（USING NOW スタンプ）</h3>
+  <h3>③ 使用中はこんな表示になります（USING NOW スタンプ）</h3>
   <div class="mockup">
     <span class="mockup-label">USING NOW</span>
     <div class="mock-card in-use">
