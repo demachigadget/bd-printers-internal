@@ -745,6 +745,32 @@
   .register-block label {
     text-align: left;
   }
+  .login-help-link {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px dashed var(--border-soft);
+    text-align: center;
+  }
+  .login-help-link a {
+    display: inline-block;
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 10px 18px;
+    border: 2px solid var(--text);
+    background: var(--card);
+    box-shadow: 3px 3px 0 var(--text);
+    transition: transform 0.05s, box-shadow 0.05s;
+  }
+  .login-help-link a:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 var(--text);
+  }
+  .login-help-link a:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 var(--text);
+  }
 
   details summary {
     cursor: pointer;
@@ -807,6 +833,11 @@
           <button class="btn btn-yellow" id="btn-register" style="width:100%;">登録してログイン</button>
         </div>
       </details>
+
+      <div class="login-help-link">
+        <a href="help.html" target="_blank" rel="noopener">📖 使い方ガイドを見る</a>
+        <div class="small" style="margin-top:6px;color:var(--text-dim);">登録前でも自由に閲覧できます</div>
+      </div>
     </div>
   </section>
 
