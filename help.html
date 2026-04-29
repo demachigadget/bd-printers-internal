@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BD Bambu Share — 使い方ガイド</title>
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="googlebot" content="noindex, nofollow">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg-elev: #f5f5f5;
+  --text: #1a1a1a;
+  --text-dim: #4a4a4a;
+  --text-mute: #8a8a8a;
+  --yellow: #ffff00;
+  --yellow-dim: #f5e600;
+  --bambu: #00ae42;
+  --red: #d61414;
+  --orange: #d97706;
+  --border: #1a1a1a;
+  --border-soft: #d0d0d0;
+  --font: "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", "Yu Gothic Medium", "Yu Gothic", Meiryo, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  background:
+    repeating-linear-gradient(
+      135deg,
+      transparent 0,
+      transparent 9px,
+      rgba(0, 0, 0, 0.04) 9px,
+      rgba(0, 0, 0, 0.04) 10px
+    ),
+    var(--bg);
+  padding-bottom: 80px;
+}
+header {
+  background: var(--bg);
+  border-bottom: 2px solid var(--border);
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+header .brand {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+header .brand .bd { background: var(--yellow); padding: 0 6px; margin-right: 6px; }
+header .brand .bambu { color: var(--bambu); }
+header .back {
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 700;
+  font-size: 13px;
+  border: 2px solid var(--text);
+  padding: 6px 14px;
+  box-shadow: 3px 3px 0 0 var(--text);
+  background: var(--yellow);
+}
+header .back:hover { background: #fff; }
+nav.toc {
+  background: var(--bg);
+  border-bottom: 2px solid var(--border);
+  padding: 12px 22px;
+  position: sticky;
+  top: 65px;
+  z-index: 9;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+nav.toc a {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-decoration: none;
+  padding: 4px 10px;
+  border: 1px solid var(--border-soft);
+}
+nav.toc a:hover { background: var(--yellow); border-color: var(--text); color: var(--text); }
+main { max-width: 880px; margin: 0 auto; padding: 0 22px; }
+section.slide {
+  background: var(--bg);
+  border: 2px solid var(--border);
+  padding: 48px 40px;
+  margin: 30px 0;
+  position: relative;
+}
+section.slide .step-num {
+  position: absolute;
+  top: -16px;
+  left: -2px;
+  background: var(--text);
+  color: var(--yellow);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 4px 14px;
+}
+section.slide.cover {
+  background: var(--text);
+  color: var(--yellow);
+  text-align: center;
+  padding: 90px 40px;
+}
+section.slide.cover h1 {
+  font-size: 56px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+  line-height: 1.1;
+}
+section.slide.cover h1 .bd {
+  background: var(--yellow);
+  color: var(--text);
+  padding: 0 12px;
+  margin-right: 10px;
+}
+section.slide.cover h1 .bambu { color: #fff; }
+section.slide.cover .subtitle {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  opacity: 0.9;
+}
+section.slide.cover .credit {
+  margin-top: 60px;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  opacity: 0.5;
+}
+h2 {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 24px;
+  letter-spacing: -0.01em;
+}
+h2 .num { background: var(--yellow); padding: 0 10px; margin-right: 10px; }
+h2 .highlight { background: var(--yellow); padding: 0 6px; }
+h3 { font-size: 18px; font-weight: 800; margin: 24px 0 8px; }
+p { font-size: 15px; color: var(--text); margin-bottom: 12px; }
+.muted { color: var(--text-dim); font-size: 14px; }
+ul, ol { padding-left: 24px; margin-bottom: 16px; }
+li { font-size: 15px; line-height: 1.9; }
+
+/* Mockup styles to mimic the actual app */
+.mockup {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 16px;
+  margin: 16px 0;
+  font-family: var(--font);
+  position: relative;
+}
+.mockup-label {
+  position: absolute;
+  top: -12px;
+  left: 12px;
+  background: var(--text);
+  color: var(--yellow);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 2px 8px;
+}
+.mock-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 18px;
+  margin-bottom: 12px;
+  position: relative;
+}
+.mock-card.printing {
+  border-color: var(--border);
+  box-shadow: 0 0 0 4px rgba(255, 255, 0, 0.4);
+}
+.mock-card.in-use { border-width: 2px; }
+.mock-card.in-use::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 8px;
+  background: var(--yellow);
+}
+.mock-card.needs-clearing {
+  border-color: var(--orange);
+  border-width: 3px;
+}
+.mock-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+.mock-name {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.state-badge {
+  font-size: 11px;
+  padding: 4px 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  border: 1px solid var(--border);
+  background: var(--bg);
+}
+.state-badge.printing { background: var(--yellow); }
+.state-badge.idle { background: var(--bg); }
+.state-badge.warn { background: var(--orange); color: #fff; border-color: var(--orange); }
+.mock-model { font-size: 13px; font-weight: 600; color: var(--text-dim); margin-bottom: 12px; }
+.mock-model .bambu-tag { color: var(--bambu); font-weight: 800; }
+.mock-progress {
+  background: var(--text);
+  color: var(--yellow);
+  padding: 8px 12px;
+  margin: 8px 0;
+  display: flex;
+  justify-content: space-between;
+  font-weight: 800;
+}
+.mock-progress .label { font-size: 10px; letter-spacing: 0.15em; opacity: 0.7; }
+.mock-progress .time { font-size: 18px; font-family: monospace; }
+.mock-bar {
+  height: 10px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  margin: 8px 0;
+  overflow: hidden;
+}
+.mock-bar .fill {
+  height: 100%;
+  background: var(--yellow);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--yellow) 0,
+    var(--yellow) 6px,
+    var(--yellow-dim) 6px,
+    var(--yellow-dim) 12px
+  );
+  background-size: 17px 17px;
+  animation: stripes 1.2s linear infinite;
+}
+@keyframes stripes {
+  0%   { background-position: 0 0; }
+  100% { background-position: 17px 0; }
+}
+.mock-warn {
+  background: repeating-linear-gradient(-45deg,
+    var(--orange) 0, var(--orange) 10px,
+    #f59e0b 10px, #f59e0b 20px);
+  color: #fff;
+  padding: 10px 14px;
+  margin: 8px -19px 12px;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+.mock-stamp {
+  position: absolute;
+  bottom: 70px;
+  right: 14px;
+  background: var(--yellow);
+  border: 3px solid var(--text);
+  padding: 8px 14px;
+  transform: rotate(-6deg);
+  text-align: center;
+  min-width: 110px;
+}
+.mock-stamp .l {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  border-bottom: 2px solid var(--text);
+  padding-bottom: 3px;
+  margin-bottom: 3px;
+}
+.mock-stamp .n { font-size: 18px; font-weight: 800; }
+.mock-stamp .dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  background: var(--red);
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: 2px;
+}
+.mock-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+.mock-btn {
+  background: var(--text);
+  color: #fff;
+  border: 2px solid var(--text);
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 800;
+  box-shadow: 2px 2px 0 0 var(--text);
+}
+.mock-btn.yellow { background: var(--yellow); color: var(--text); }
+.mock-btn.sub { background: var(--bg); color: var(--text); }
+.mock-btn.disabled { background: var(--bg); color: var(--text-mute); border-color: var(--text-mute); opacity: 0.6; }
+
+.tip {
+  background: var(--bg-elev);
+  border-left: 4px solid var(--yellow);
+  padding: 12px 16px;
+  margin: 16px 0;
+  font-size: 14px;
+}
+.tip strong { color: var(--text); }
+
+footer {
+  text-align: center;
+  padding: 30px 16px;
+  color: #aaa;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+}
+@media (max-width: 600px) {
+  section.slide { padding: 32px 20px; }
+  section.slide.cover { padding: 70px 20px; }
+  section.slide.cover h1 { font-size: 36px; }
+  h2 { font-size: 22px; }
+  main { padding: 0 12px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand"><span class="bd">BD</span><span class="bambu">Bambu</span> Share</div>
+  <a class="back" href="index.html">← アプリに戻る</a>
+</header>
+
+<nav class="toc">
+  <a href="#cover">概要</a>
+  <a href="#login">1. ログイン</a>
+  <a href="#dashboard">2. ダッシュボード</a>
+  <a href="#use-flow">3. 使う流れ</a>
+  <a href="#warnings">4. 警告表示</a>
+  <a href="#reservation">5. 予約</a>
+  <a href="#maintenance">6. メンテ記録</a>
+  <a href="#messages">7. 連絡帳</a>
+  <a href="#twofa">8. 2FAコード</a>
+  <a href="#settings">9. 設定</a>
+  <a href="#troubleshoot">10. 困った時</a>
+</nav>
+
+<main>
+
+<section class="slide cover" id="cover">
+  <h1><span class="bd">BD</span><span class="bambu">Bambu</span> Share</h1>
+  <div class="subtitle">使い方ガイド</div>
+  <div class="credit">Made for BASSDRUM by TELEPHONOVISION</div>
+</section>
+
+<section class="slide" id="overview">
+  <h2><span class="num">概要</span>このツールでできること</h2>
+  <p>BASSDRUM の <strong>Bambu Lab P2S 5台</strong>（乃木坂 2台 / 京都 3台）を、メンバーで安全に共有するためのツールです。</p>
+  <ul>
+    <li>📊 <strong>5台のリアルタイム状態</strong>：温度・進捗・終了予定時刻が自動表示</li>
+    <li>🟡 <strong>「使用中」マーク</strong>：誰が使っているか一目でわかる</li>
+    <li>📅 <strong>予約カレンダー</strong>：時間枠の重複を防ぐ</li>
+    <li>🔧 <strong>メンテナンス記録</strong>：清掃・交換などの履歴</li>
+    <li>💬 <strong>連絡帳</strong>：「フィラメント残少」など共有メモ</li>
+    <li>🔐 <strong>2FA コード自動取得</strong>：Bambu Studio 初回ログイン時の確認コードを画面で取得</li>
+    <li>⚠️ <strong>「回収待ち」警告</strong>：印刷物がプレートに残っている時、次の印刷を防ぐ</li>
+  </ul>
+</section>
+
+<section class="slide" id="login">
+  <span class="step-num">STEP 1</span>
+  <h2>ログイン / 新規登録</h2>
+  <p>パスワードは不要です。メールアドレスだけでログインできます。</p>
+
+  <h3>既に登録済みの方</h3>
+  <p>登録済みのメールアドレスを入力 → 「ログイン」</p>
+  <div class="mockup">
+    <span class="mockup-label">LOGIN</span>
+    <div style="text-align:center; padding:30px 20px;">
+      <div style="font-size:32px; font-weight:800; margin-bottom:12px;">
+        <span style="background:var(--yellow); padding:0 8px; margin-right:8px;">BD</span><span style="color:var(--bambu);">Bambu</span> Share
+      </div>
+      <p class="muted">登録済みのメールアドレスでログインしてください</p>
+      <div style="margin:20px auto; max-width:300px;">
+        <input type="text" value="your@bassdrum.org" style="width:100%; padding:10px; border:1px solid var(--border-soft); margin-bottom:10px;" readonly>
+        <button class="mock-btn" style="width:100%;">ログイン</button>
+      </div>
+    </div>
+  </div>
+
+  <h3>初めての方（新規登録）</h3>
+  <p>ログイン画面の <strong>「初めての方 — 新規登録」</strong> をクリックして開き、メールと表示名を入力すれば即座に使い始められます。</p>
+  <div class="mockup">
+    <span class="mockup-label">SIGN UP</span>
+    <div style="text-align:center; padding:30px 20px;">
+      <div style="margin:0 auto; max-width:320px; text-align:left; border:1px solid var(--border); padding:14px;">
+        <div style="font-weight:800; margin-bottom:10px;">▼ 初めての方 — 新規登録</div>
+        <p class="muted" style="font-size:13px;">メールアドレスと表示名を入力すると、すぐに使い始められます</p>
+        <input type="text" placeholder="メール: your@bassdrum.org" style="width:100%; padding:8px; margin:6px 0; border:1px solid var(--border-soft);" readonly>
+        <input type="text" placeholder="表示名: 例 山田 太郎" style="width:100%; padding:8px; margin:6px 0; border:1px solid var(--border-soft);" readonly>
+        <button class="mock-btn yellow" style="width:100%; padding:8px;">登録してログイン</button>
+      </div>
+    </div>
+  </div>
+  <div class="tip">
+    <strong>権限</strong>: 新規登録は「メンバー」権限が自動付与されます。プリンタ操作・予約・記録投稿などすべて可能です。<br>
+    管理者権限は別途、管理者がスプレッドシートで付与します。
+  </div>
+</section>
+
+<section class="slide" id="dashboard">
+  <span class="step-num">STEP 2</span>
+  <h2>ダッシュボードの<span class="highlight">見方</span></h2>
+  <p>5台のプリンタが <strong>乃木坂オフィス（2台）</strong> と <strong>京都オフィス（3台）</strong> に分かれて表示されます。</p>
+
+  <h3>状態バッジの種類</h3>
+  <ul>
+    <li><span class="state-badge idle">待機</span> — 誰も使ってない、印刷もしてない（=使える）</li>
+    <li><span class="state-badge printing">印刷中</span> — 現在印刷ジョブが走っている</li>
+    <li><span class="state-badge warn">回収待ち</span> — 印刷物がプレートに残っている（後述）</li>
+    <li><span class="state-badge" style="background:#1a1a1a; color:#fff;">オフライン</span> — プリンタが電源OFFまたは通信不可</li>
+  </ul>
+
+  <h3>印刷中カードのサンプル</h3>
+  <div class="mockup">
+    <span class="mockup-label">PRINTING</span>
+    <div class="mock-card printing">
+      <div class="mock-head">
+        <div class="mock-name">さぶちゃん</div>
+        <span class="state-badge printing">印刷中</span>
+      </div>
+      <div class="mock-model"><span class="bambu-tag">Bambu</span> P2S</div>
+      <div class="mock-progress">
+        <span><span class="label">FINISH</span> <span class="time">23:45</span></span>
+        <span style="font-size:11px;">あと 30分</span>
+      </div>
+      <div class="mock-bar"><div class="fill" style="width:60%;"></div></div>
+      <div class="muted" style="font-size:13px;">進捗 <strong>60%</strong></div>
+    </div>
+  </div>
+  <p class="muted">進捗バーは斜めストライプが流れ、カードもふんわり光ってアクティブなことを示します。</p>
+</section>
+
+<section class="slide" id="use-flow">
+  <span class="step-num">STEP 3</span>
+  <h2>プリンタを<span class="highlight">使う流れ</span></h2>
+  <ol>
+    <li><strong>「これを使う」ボタン</strong> を押す（カードが黄色くなり、自分の名前が「USING NOW」スタンプで表示される）</li>
+    <li>Bambu Studio から印刷を送信</li>
+    <li>印刷中はカードが自動でリアルタイム更新（温度・進捗・終了予定時刻）</li>
+    <li>印刷終了後、プリンタへ行ってプレートからプリントを剥がす</li>
+    <li><strong>「使い終わった」ボタン</strong> を押す → 待機状態に戻る</li>
+  </ol>
+
+  <h3>「使用中」マーク（USING NOW スタンプ）</h3>
+  <div class="mockup">
+    <span class="mockup-label">USING NOW</span>
+    <div class="mock-card in-use">
+      <div class="mock-head">
+        <div class="mock-name">いっちゃん</div>
+        <span class="state-badge idle">待機</span>
+      </div>
+      <div class="mock-model"><span class="bambu-tag">Bambu</span> P2S</div>
+      <div class="mock-stamp">
+        <div class="l"><span class="dot"></span>USING NOW</div>
+        <div class="n">Hiroki</div>
+      </div>
+      <div class="mock-actions">
+        <span class="mock-btn sub">使い終わった</span>
+        <span class="mock-btn sub">状態更新</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <strong>大事</strong>：印刷物を剥がすまで「使い終わった」を押さないでください。次の人が間違って印刷しちゃう可能性があります。
+  </div>
+</section>
+
+<section class="slide" id="warnings">
+  <span class="step-num">STEP 4</span>
+  <h2>「<span class="highlight">回収待ち</span>」警告</h2>
+  <p>印刷が終わったのに、まだ誰も「使い終わった」を押していない＝<strong>プレートに印刷物が残っている</strong>状態を、UI で目立つように表示します。</p>
+
+  <div class="mockup">
+    <span class="mockup-label">NEEDS CLEARING</span>
+    <div class="mock-card needs-clearing">
+      <div class="mock-head">
+        <div class="mock-name">さぶちゃん</div>
+        <span class="state-badge warn">回収待ち</span>
+      </div>
+      <div class="mock-model"><span class="bambu-tag">Bambu</span> P2S</div>
+      <div class="mock-warn">⚠ 印刷物の回収待ち — 「使い終わった」を押してください</div>
+      <div class="mock-actions">
+        <span class="mock-btn yellow disabled">これを使う</span>
+        <span class="mock-btn sub">状態更新</span>
+      </div>
+    </div>
+  </div>
+
+  <p>このカードは:</p>
+  <ul>
+    <li>太いオレンジ枠で囲まれる</li>
+    <li>状態バッジが <span class="state-badge warn">回収待ち</span></li>
+    <li>斜めストライプの警告バナー</li>
+    <li>「これを使う」ボタンが無効化（誤ってクリックできない）</li>
+  </ul>
+  <p class="muted">プレートを片付けて「使い終わった」を押すと、通常の「待機」に戻ります。</p>
+</section>
+
+<section class="slide" id="reservation">
+  <span class="step-num">STEP 5</span>
+  <h2>予約</h2>
+  <p>事前に「この時間にこのプリンタを使うよ」と他のメンバーに知らせる機能。重複は自動で弾かれます。</p>
+  <ol>
+    <li>タブの「予約」を開く</li>
+    <li>プリンタを選択</li>
+    <li>開始・終了の日時を入力</li>
+    <li>用途を入力（任意）</li>
+    <li>「予約する」をクリック</li>
+  </ol>
+  <div class="tip">
+    <strong>キャンセル</strong>：自分の予約は「キャンセル」ボタンで取り消せます。管理者は他の人の予約も取り消せます。
+  </div>
+</section>
+
+<section class="slide" id="maintenance">
+  <span class="step-num">STEP 6</span>
+  <h2>メンテナンス記録</h2>
+  <p>ノズル清掃・ベッド調整・フィラメント交換などを記録します。あとから誰が何時にやったか追えます。</p>
+  <ul>
+    <li>種別: ノズル清掃 / ノズル交換 / ベッド調整 / フィラメント交換 / 注油 / その他</li>
+    <li>プリンタごとに履歴をフィルタ可能</li>
+  </ul>
+</section>
+
+<section class="slide" id="messages">
+  <span class="step-num">STEP 7</span>
+  <h2>連絡帳</h2>
+  <p>「フィラメント残少」「○○のノズルが詰まりやすい」などのメモを共有します。</p>
+  <ul>
+    <li>カテゴリ: 情報 / フィラメント / メンテ依頼 / <strong style="color:var(--red);">緊急</strong></li>
+    <li>対象プリンタを指定すれば、そのプリンタ宛てになる（任意）</li>
+    <li>ダッシュボードに最新5件が常に表示されます</li>
+  </ul>
+</section>
+
+<section class="slide" id="twofa">
+  <span class="step-num">STEP 8</span>
+  <h2>Bambu Studio<span class="highlight">2FAコード取得</span></h2>
+  <p>Bambu Studio に共有アカウントで初回ログインする時、確認コードがメールで届きます。共有Gmailにアクセス権がない人でも、このツールでコードを取得できます。</p>
+  <ol>
+    <li>Bambu Studio で共有アカウントの ID/パスワードを入力</li>
+    <li>「コードを送信」が押されると、共有Gmail（demachigadget@gmail.com）にコードが届く</li>
+    <li>このツールの「2FA」タブを開いて「<strong>確認コードを取得</strong>」を押す</li>
+    <li>5秒ごとに自動で受信箱を監視 → コードを画面に表示</li>
+    <li>表示された6桁を Bambu Studio に貼り付け → ログイン完了</li>
+  </ol>
+  <div class="tip">
+    <strong>注意</strong>: 2FAコードは数分で期限切れます。サクッと貼り付けてください。
+  </div>
+</section>
+
+<section class="slide" id="settings">
+  <span class="step-num">STEP 9</span>
+  <h2>設定</h2>
+  <ul>
+    <li><strong>表示名の変更</strong>: 設定タブから自分の表示名を更新できます（他のメンバーに見えるのはこの名前）</li>
+    <li><strong>ログアウト</strong>: 共有PCで使った時は忘れずにログアウト</li>
+    <li><strong>使い方ガイド</strong>: このページへのリンク</li>
+  </ul>
+</section>
+
+<section class="slide" id="troubleshoot">
+  <span class="step-num">STEP 10</span>
+  <h2>困った時は</h2>
+  <h3>ログインできない</h3>
+  <p>「初めての方 — 新規登録」セクションから自分でメール+表示名を登録すれば、すぐ使い始められます。</p>
+
+  <h3>状態が更新されない</h3>
+  <ol>
+    <li>ブラウザを <strong>Cmd+Shift+R</strong> でハードリロード</li>
+    <li>「⟳ 更新」ボタンをクリック</li>
+    <li>それでもダメなら管理者へ連絡</li>
+  </ol>
+
+  <h3>2FA コードが取れない</h3>
+  <p>Bambu の確認メールフォーマットが変わっている可能性。管理者へ連絡。</p>
+
+  <h3>誤って印刷物を上書きしてしまった</h3>
+  <p>「回収待ち」表示が出ているはずなので、そのプリンタは使わないでください。プレート確認のために実物を見に行きましょう。</p>
+
+  <div class="tip">
+    <strong>連絡先</strong>: 連絡帳タブの「緊急」カテゴリで投稿、または管理者に直接連絡。
+  </div>
+</section>
+
+</main>
+
+<footer>
+  BD Bambu Share by <strong>TELEPHONOVISION</strong>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,1712 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BD Bambu Share - プリンタ共有システム</title>
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="googlebot" content="noindex, nofollow">
+<meta name="description" content="">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ffffff">
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-soft: #fafafa;
+    --bg-elev: #f5f5f5;
+    --bg-card-alt: #fafafa;
+    --border: #1a1a1a;
+    --border-soft: #d0d0d0;
+    --border-softer: #e5e5e5;
+    --text: #1a1a1a;
+    --text-dim: #4a4a4a;
+    --text-mute: #8a8a8a;
+    --yellow: #ffff00;
+    --yellow-dim: #f5e600;
+    --bambu: #00ae42;
+    --bambu-dim: #008a35;
+    --green: #2cb696;
+    --red: #d61414;
+    --gray: #707070;
+    --font: "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", "Yu Gothic Medium", "Yu Gothic", Meiryo, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    color: var(--text);
+    font-family: var(--font);
+    line-height: 1.5;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  html { background: var(--bg); }
+  body {
+    padding-bottom: 80px;
+    background:
+      repeating-linear-gradient(
+        135deg,
+        transparent 0,
+        transparent 9px,
+        rgba(0, 0, 0, 0.055) 9px,
+        rgba(0, 0, 0, 0.055) 10px
+      ),
+      var(--bg);
+  }
+  button { font-family: inherit; cursor: pointer; }
+  input, select, textarea { font-family: inherit; }
+  a { color: var(--text); text-decoration: underline; }
+
+  /* === Header === */
+  header {
+    background: var(--bg);
+    border-bottom: 2px solid var(--border);
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  header .brand {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+  }
+  header .brand .bd {
+    background: var(--yellow);
+    padding: 0 6px;
+    margin-right: 6px;
+  }
+  header .brand .bambu {
+    color: var(--bambu);
+  }
+  header .user-info {
+    font-size: 13px;
+    color: var(--text-dim);
+    font-weight: 600;
+  }
+  header .user-info .name {
+    color: var(--text);
+    font-weight: 800;
+    background: var(--yellow);
+    padding: 2px 8px;
+    margin-right: 4px;
+  }
+  header .user-info .role {
+    color: var(--text-mute);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* === Tabs === */
+  nav.tabs {
+    background: var(--bg);
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    position: sticky;
+    top: 65px;
+    z-index: 9;
+  }
+  nav.tabs button {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+  }
+  nav.tabs button:hover { color: var(--text); }
+  nav.tabs button.active {
+    color: var(--text);
+    border-bottom-color: var(--yellow);
+    background: linear-gradient(transparent 60%, var(--yellow) 60%, var(--yellow) 92%, transparent 92%);
+  }
+
+  main { padding: 28px 22px; max-width: 1200px; margin: 0 auto; }
+  section { display: none; }
+  section.active { display: block; }
+
+  h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  h2 .highlight { background: var(--yellow); padding: 0 6px; }
+  h3 {
+    font-size: 16px;
+    margin-bottom: 12px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+
+  /* === Panel === */
+  .panel {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 0;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  /* === Buttons (neo-brutalist with depth shadow) === */
+  .btn {
+    background: var(--text);
+    color: #fff;
+    border: 2px solid var(--text);
+    border-radius: 0;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    box-shadow: 3px 3px 0 0 var(--text);
+    transition: transform 0.08s ease-out, box-shadow 0.08s ease-out, background 0.12s, color 0.12s;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    line-height: 1.2;
+  }
+  .btn:hover {
+    background: var(--yellow);
+    color: var(--text);
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 0 var(--text);
+  }
+  .btn:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0 0 0 0 var(--text);
+  }
+  .btn:disabled {
+    background: var(--gray);
+    border-color: var(--gray);
+    color: #fff;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+  .btn-sub {
+    background: var(--bg);
+    color: var(--text);
+    border-color: var(--text);
+  }
+  .btn-sub:hover { background: var(--yellow); color: var(--text); }
+  .btn-yellow {
+    background: var(--yellow);
+    color: var(--text);
+    border-color: var(--text);
+  }
+  .btn-yellow:hover { background: #fff; color: var(--text); }
+  .btn-danger {
+    background: var(--red);
+    border-color: var(--text);
+    color: #fff;
+  }
+  .btn-danger:hover { background: var(--text); color: var(--red); }
+  .btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+    box-shadow: 2px 2px 0 0 var(--text);
+  }
+  .btn-sm:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 0 var(--text);
+  }
+  .btn-sm:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0 0 0 0 var(--text);
+  }
+
+  /* === Forms === */
+  label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  input, select, textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border-soft);
+    border-radius: 0;
+    padding: 10px 12px;
+    color: var(--text);
+    font-size: 14px;
+    margin-bottom: 14px;
+    transition: border-color 0.1s;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--text);
+    box-shadow: 0 0 0 2px var(--yellow);
+  }
+  textarea { min-height: 80px; resize: vertical; }
+  .form-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .form-row > * { flex: 1 1 200px; }
+
+  /* === Location group header === */
+  .location-group { margin-bottom: 32px; }
+  .location-header {
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text);
+  }
+  .location-header::after {
+    content: "";
+    flex: 1;
+    height: 2px;
+    background: var(--text);
+  }
+  .location-header .pin {
+    background: var(--yellow);
+    padding: 4px 12px;
+    font-weight: 800;
+  }
+  .location-header .count {
+    color: var(--text-dim);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* === Printer Grid === */
+  .printer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+  }
+  .printer-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 0;
+    padding: 20px;
+    position: relative;
+    transition: transform 0.1s;
+    overflow: hidden;
+  }
+  .printer-card.in-use {
+    border-width: 2px;
+    padding: 19px;
+  }
+  .printer-card.in-use::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 8px;
+    background: var(--yellow);
+  }
+
+  /* Big "USING" stamp positioned in empty area of in-use card */
+  .in-use-stamp {
+    position: absolute;
+    bottom: 70px;
+    right: 14px;
+    background: var(--yellow);
+    border: 3px solid var(--text);
+    padding: 8px 14px 6px;
+    transform: rotate(-6deg);
+    pointer-events: none;
+    z-index: 1;
+    text-align: center;
+    min-width: 110px;
+  }
+  .in-use-stamp .stamp-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    color: var(--text);
+    border-bottom: 2px solid var(--text);
+    padding-bottom: 3px;
+    margin-bottom: 3px;
+    line-height: 1;
+  }
+  .in-use-stamp .stamp-name {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .in-use-stamp .stamp-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background: var(--red);
+    border-radius: 50%;
+    margin-right: 5px;
+    vertical-align: 2px;
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .printer-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 4px;
+    gap: 8px;
+  }
+  .printer-name {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    color: var(--text);
+  }
+  .state-badge {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 0;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .state-idle      { background: var(--bg); color: var(--text); }
+  .state-printing  { background: var(--yellow); color: var(--text); }
+  .state-paused    { background: var(--bg); color: var(--text); }
+  .state-error     { background: var(--red); color: #fff; border-color: var(--red); }
+  .state-offline   { background: var(--text); color: #fff; }
+  .state-unknown   { background: var(--bg-elev); color: var(--text-dim); border-color: var(--border-soft); }
+
+  .printer-model {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 14px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .printer-model .model-name { color: var(--text); font-weight: 700; }
+  .printer-model .bambu-tag { color: var(--bambu); font-weight: 700; }
+
+  .progress-bar {
+    height: 10px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin: 10px 0 6px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--yellow);
+    transition: width 0.3s;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      var(--yellow) 0,
+      var(--yellow) 6px,
+      var(--yellow-dim) 6px,
+      var(--yellow-dim) 12px
+    );
+    background-size: 17px 17px;
+    animation: progress-stripes 1.2s linear infinite;
+  }
+  @keyframes progress-stripes {
+    0%   { background-position: 0 0; }
+    100% { background-position: 17px 0; }
+  }
+  .printing-eta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin: 8px 0 6px;
+    padding: 8px 10px;
+    background: var(--text);
+    color: var(--yellow);
+    font-weight: 700;
+  }
+  .printing-eta .label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    opacity: 0.7;
+    margin-right: 6px;
+  }
+  .printing-eta .time {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    font-family: "SF Mono", Monaco, Consolas, monospace;
+  }
+  .printing-eta .remain {
+    font-size: 11px;
+    color: var(--yellow);
+    opacity: 0.85;
+  }
+  /* 印刷中カードのpulse */
+  .printer-card.printing {
+    animation: card-pulse 2s ease-in-out infinite;
+  }
+  @keyframes card-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 0, 0); }
+    50%      { box-shadow: 0 0 0 4px rgba(255, 255, 0, 0.4); }
+  }
+
+  /* 印刷物回収待ち（needs_clearing） */
+  .printer-card.needs-clearing {
+    border-color: #d97706;
+    border-width: 3px;
+    padding: 17px;
+  }
+  .clearing-warning {
+    background: repeating-linear-gradient(
+      -45deg,
+      #d97706 0,
+      #d97706 10px,
+      #f59e0b 10px,
+      #f59e0b 20px
+    );
+    color: #fff;
+    padding: 10px 14px;
+    margin: 8px -17px 12px;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .clearing-warning::before {
+    content: "⚠";
+    font-size: 20px;
+  }
+  /* 回収待ちの時、状態バッジも警告色 */
+  .printer-card.needs-clearing .state-badge.state-idle {
+    background: #d97706;
+    color: #fff;
+    border-color: #d97706;
+  }
+  /* 回収待ちの時、「これを使う」ボタンを目立たなく */
+  .printer-card.needs-clearing .btn-yellow {
+    background: var(--bg);
+    color: var(--text-mute);
+    border-color: var(--text-mute);
+    box-shadow: 2px 2px 0 0 var(--text-mute);
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  .printer-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+    padding-bottom: 4px;
+  }
+
+  .status-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text);
+    margin: 12px 0;
+    padding: 10px 12px;
+    border: 1px solid var(--text);
+    background:
+      repeating-linear-gradient(
+        45deg,
+        transparent 0,
+        transparent 5px,
+        rgba(0, 0, 0, 0.06) 5px,
+        rgba(0, 0, 0, 0.06) 6px
+      ),
+      repeating-linear-gradient(
+        -45deg,
+        transparent 0,
+        transparent 5px,
+        rgba(0, 0, 0, 0.06) 5px,
+        rgba(0, 0, 0, 0.06) 6px
+      ),
+      #fafafa;
+  }
+  .status-row > div {
+    background: var(--bg);
+    padding: 4px 8px;
+    border: 1px solid var(--border-soft);
+    font-weight: 600;
+  }
+  .status-row strong { font-weight: 800; color: var(--text); }
+
+  .note-line { font-size: 13px; margin-top: 6px; line-height: 1.5; }
+  .note-line .marker {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    padding: 2px 7px;
+    margin-right: 6px;
+    vertical-align: 2px;
+  }
+  .note-line.use { color: var(--text); font-weight: 700; }
+  .note-line.use .marker { background: var(--yellow); }
+  .note-line.reserved { color: var(--text); font-weight: 600; }
+  .note-line.reserved .marker { background: var(--text); color: #fff; }
+  .note-line.upcoming { color: var(--text-dim); font-weight: 500; font-size: 12px; }
+  .note-line.updated { color: var(--text-mute); margin-top: 10px; font-size: 11px; }
+
+  /* === Reservations === */
+  .reservation-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    background: var(--bg);
+    border: 1px solid var(--border-soft);
+    margin-bottom: 8px;
+    gap: 12px;
+  }
+  .reservation-item .info { font-size: 14px; }
+  .reservation-item .info .printer { font-weight: 800; font-size: 16px; }
+  .reservation-item .info .printer .marker { background: var(--yellow); padding: 0 4px; }
+  .reservation-item .info .time { color: var(--text-dim); margin-top: 4px; font-size: 13px; }
+
+  /* === Timeline (Maintenance / Messages) === */
+  .timeline-item {
+    background: var(--bg);
+    border: 1px solid var(--border-soft);
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    border-left: 4px solid var(--text);
+  }
+  .timeline-item.cat-filament { border-left-color: var(--yellow); }
+  .timeline-item.cat-maintenance { border-left-color: var(--green); }
+  .timeline-item.cat-urgent { border-left-color: var(--red); }
+  .timeline-item.cat-info { border-left-color: var(--text-dim); }
+  .timeline-meta {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-weight: 600;
+  }
+  .timeline-meta .badge {
+    background: var(--bg-elev);
+    padding: 2px 8px;
+    border: 1px solid var(--border-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .timeline-meta .badge.yellow { background: var(--yellow); border-color: var(--text); color: var(--text); }
+  .timeline-body { font-size: 14px; white-space: pre-wrap; word-break: break-word; }
+
+  /* === 2FA === */
+  .twofa-code {
+    font-size: 48px;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-align: center;
+    color: var(--text);
+    margin: 24px 0;
+    padding: 28px;
+    background: var(--yellow);
+    border: 1px solid var(--border);
+    font-family: "SF Mono", Monaco, Consolas, monospace;
+  }
+  .twofa-status {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--border-soft);
+    border-top-color: var(--text);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* === Toast === */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--text);
+    color: #fff;
+    padding: 14px 24px;
+    border-radius: 0;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+  .toast.success { background: var(--text); border-left: 6px solid var(--yellow); }
+  .toast.error { background: var(--red); }
+
+  /* === Empty state === */
+  .empty {
+    text-align: center;
+    color: var(--text-dim);
+    padding: 40px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    background: var(--bg-elev);
+    border: 1px solid var(--border-soft);
+  }
+
+  .row { display: flex; gap: 8px; align-items: center; }
+  .small { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+  .center { text-align: center; }
+  .mb { margin-bottom: 12px; }
+  .mt { margin-top: 12px; }
+  .mt-lg { margin-top: 24px; }
+
+  /* === Login === */
+  .login-box {
+    max-width: 440px;
+    margin: 60px auto;
+    text-align: center;
+    padding: 0 16px;
+  }
+  .login-box .login-brand {
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+  .login-box .login-brand .bd {
+    background: var(--yellow);
+    padding: 0 8px;
+    margin-right: 8px;
+  }
+  .login-box .login-brand .bambu {
+    color: var(--bambu);
+  }
+  .login-box p {
+    color: var(--text-dim);
+    margin-bottom: 28px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .login-box input { font-size: 16px; padding: 14px 14px; }
+  .login-box .btn { width: 100%; padding: 14px; font-size: 15px; }
+  .login-divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 28px 0;
+    color: var(--text-mute);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+  }
+  .login-divider::before,
+  .login-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border-soft);
+  }
+  .register-block {
+    text-align: left;
+    border: 1px solid var(--border);
+    padding: 14px 16px;
+  }
+  .register-block summary {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text);
+    padding: 0;
+  }
+  .register-block summary:hover { color: var(--text); }
+  .register-block[open] summary {
+    margin-bottom: 8px;
+  }
+  .register-block label {
+    text-align: left;
+  }
+
+  details summary {
+    cursor: pointer;
+    color: var(--text-dim);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 0;
+  }
+  details summary:hover { color: var(--text); }
+
+  @media (max-width: 600px) {
+    main { padding: 20px 14px; }
+    h2 { font-size: 22px; }
+    .printer-grid { grid-template-columns: 1fr; }
+    nav.tabs button { padding: 12px 14px; font-size: 13px; }
+    header { padding: 14px 16px; }
+    header .brand { font-size: 16px; }
+    .twofa-code { font-size: 36px; padding: 20px; }
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="brand"><span class="bd">BD</span><span class="bambu">Bambu</span> Share</div>
+  <div class="user-info" id="user-info">未ログイン</div>
+</header>
+
+<nav class="tabs" id="tabs" style="display:none;">
+  <button data-tab="dashboard" class="active">ダッシュボード</button>
+  <button data-tab="reservations">予約</button>
+  <button data-tab="maintenance">メンテ</button>
+  <button data-tab="messages">連絡帳</button>
+  <button data-tab="twofa">2FA</button>
+  <button data-tab="settings">設定</button>
+</nav>
+
+<main>
+
+  <!-- =============== Login =============== -->
+  <section id="login" class="active">
+    <div class="login-box">
+      <div class="login-brand"><span class="bd">BD</span><span class="bambu">Bambu</span> Share</div>
+      <p>登録済みのメールアドレスでログインしてください。</p>
+      <input type="email" id="login-email" placeholder="your@bassdrum.org" autocomplete="email">
+      <button class="btn" id="btn-login">ログイン</button>
+      <div class="mt small" id="login-msg"></div>
+
+      <div class="login-divider"><span>または</span></div>
+
+      <details class="register-block">
+        <summary>初めての方 — 新規登録</summary>
+        <div class="mt">
+          <p class="small mb">メールアドレスと表示名を入力すると、すぐに使い始められます。</p>
+          <label>メールアドレス</label>
+          <input type="email" id="reg-email" placeholder="your@bassdrum.org" autocomplete="email">
+          <label>表示名（他のメンバーに見える名前）</label>
+          <input type="text" id="reg-name" placeholder="例: 山田 太郎">
+          <button class="btn btn-yellow" id="btn-register" style="width:100%;">登録してログイン</button>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- =============== Dashboard =============== -->
+  <section id="dashboard">
+    <div class="row mb" style="justify-content:space-between;">
+      <h2>プリンタ<span class="highlight">一覧</span></h2>
+      <button class="btn btn-sub btn-sm" id="btn-refresh">⟳ 更新</button>
+    </div>
+    <div id="printer-grid">
+      <div class="empty">読み込み中…</div>
+    </div>
+
+    <h3 class="mt-lg">最新の連絡（直近5件）</h3>
+    <div id="dashboard-messages"><div class="empty small">読み込み中…</div></div>
+  </section>
+
+  <!-- =============== Reservations =============== -->
+  <section id="reservations">
+    <h2>予約</h2>
+    <div class="panel">
+      <h3>新規予約</h3>
+      <div class="form-row">
+        <div>
+          <label>プリンタ</label>
+          <select id="res-printer"></select>
+        </div>
+        <div>
+          <label>用途（任意）</label>
+          <input type="text" id="res-purpose" placeholder="例: プロト試作">
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label>開始</label>
+          <input type="datetime-local" id="res-start">
+        </div>
+        <div>
+          <label>終了</label>
+          <input type="datetime-local" id="res-end">
+        </div>
+      </div>
+      <button class="btn" id="btn-create-res">予約する</button>
+    </div>
+
+    <h3 class="mt-lg">直近の予約</h3>
+    <div id="res-list"><div class="empty small">読み込み中…</div></div>
+  </section>
+
+  <!-- =============== Maintenance =============== -->
+  <section id="maintenance">
+    <h2>メンテナンス記録</h2>
+    <div class="panel">
+      <h3>記録を追加</h3>
+      <div class="form-row">
+        <div>
+          <label>プリンタ</label>
+          <select id="maint-printer"></select>
+        </div>
+        <div>
+          <label>種別</label>
+          <select id="maint-type">
+            <option value="nozzle_clean">ノズル清掃</option>
+            <option value="nozzle_replace">ノズル交換</option>
+            <option value="bed_adjust">ベッド調整</option>
+            <option value="filament_change">フィラメント交換</option>
+            <option value="lubrication">注油</option>
+            <option value="other">その他</option>
+          </select>
+        </div>
+      </div>
+      <label>メモ</label>
+      <textarea id="maint-note" placeholder="状況や対処内容を記入"></textarea>
+      <button class="btn" id="btn-add-maint">記録する</button>
+    </div>
+
+    <h3 class="mt-lg">履歴</h3>
+    <div class="row mb">
+      <label style="margin:0;">フィルタ:</label>
+      <select id="maint-filter" style="width:auto; margin:0;">
+        <option value="">全て</option>
+      </select>
+    </div>
+    <div id="maint-list"><div class="empty small">読み込み中…</div></div>
+  </section>
+
+  <!-- =============== Messages =============== -->
+  <section id="messages">
+    <h2>連絡帳</h2>
+    <div class="panel">
+      <h3>投稿</h3>
+      <div class="form-row">
+        <div>
+          <label>カテゴリ</label>
+          <select id="msg-category">
+            <option value="info">情報</option>
+            <option value="filament">フィラメント</option>
+            <option value="maintenance">メンテ依頼</option>
+            <option value="urgent">緊急</option>
+          </select>
+        </div>
+        <div>
+          <label>対象プリンタ（任意）</label>
+          <select id="msg-printer">
+            <option value="">全体</option>
+          </select>
+        </div>
+      </div>
+      <label>本文</label>
+      <textarea id="msg-body" placeholder="例: いっちゃんのPLA黒、残り少なめ。次に使う人補充お願いします"></textarea>
+      <button class="btn" id="btn-post-msg">投稿する</button>
+    </div>
+
+    <h3 class="mt-lg">タイムライン</h3>
+    <div id="msg-list"><div class="empty small">読み込み中…</div></div>
+  </section>
+
+  <!-- =============== 2FA =============== -->
+  <section id="twofa">
+    <h2>Bambu Studio<br>2FAコード取得</h2>
+    <div class="panel">
+      <p class="small mb">
+        Bambu Studio に共有アカウントで初回ログインするとき、共有Gmailに届く確認コードをここで取得できます。
+      </p>
+      <ol class="small mb" style="padding-left:20px;">
+        <li>Bambu Studio で共有アカウントの ID/パスワードを入力</li>
+        <li>Bambu が確認コードを送信したら、下のボタンを押す</li>
+        <li>表示されたコードを Bambu Studio に貼り付け</li>
+      </ol>
+      <button class="btn btn-yellow" id="btn-request-2fa" style="width:100%;">確認コードを取得</button>
+    </div>
+
+    <div id="twofa-result"></div>
+  </section>
+
+  <!-- =============== Settings =============== -->
+  <section id="settings">
+    <h2>設定</h2>
+
+    <div class="panel">
+      <h3>アカウント</h3>
+      <div id="settings-info" class="small mb"></div>
+      <label>表示名</label>
+      <input type="text" id="settings-name" placeholder="表示名">
+      <button class="btn" id="btn-save-name">名前を更新</button>
+      <div class="mt"><button class="btn btn-sub" id="btn-logout">ログアウト</button></div>
+    </div>
+
+    <div class="panel">
+      <h3>使い方ガイド</h3>
+      <p class="small mb">スクリーンショット付きの使い方ガイドを別ページで開きます</p>
+      <a class="btn btn-yellow" id="btn-help" href="help.html" target="_blank" rel="noopener">📖 使い方を見る</a>
+    </div>
+
+    <div class="panel">
+      <h3>API URL（管理者）</h3>
+      <p class="small mb">GASのデプロイURLを変更する場合のみ使用</p>
+      <input type="url" id="settings-api-url" placeholder="https://script.google.com/macros/s/.../exec">
+      <button class="btn btn-sub" id="btn-save-api-url">保存</button>
+    </div>
+
+    <div class="panel">
+      <h3>このツールについて</h3>
+      <p class="small">
+        <strong>BD Bambu Share v1.0</strong> — BASSDRUM 専用 Bambu Lab プリンタ共有見える化システム
+      </p>
+      <p class="small mt">
+        実装機能:
+      </p>
+      <ul class="small" style="padding-left:20px; line-height:1.9;">
+        <li>📊 5台のプリンタ状態を<strong>リアルタイム自動表示</strong>（温度・進捗・終了予定時刻）</li>
+        <li>🟡「使用中」マークでメンバー間の共有</li>
+        <li>📅 予約カレンダー（重複防止）</li>
+        <li>🔧 メンテナンス記録（種別・履歴管理）</li>
+        <li>💬 連絡帳（フィラメント残少などをカテゴリ別投稿）</li>
+        <li>🔐 Bambu Studio 初回ログインの2FAコード自動配布（共有Gmail監視）</li>
+        <li>⚠️ 印刷終了後の<strong>「回収待ち」警告</strong>（プレートが片付いていない時、次の印刷を防ぐ）</li>
+      </ul>
+      <p class="small mt">
+        オフィス: 乃木坂（2台）／ 京都（3台）
+      </p>
+      <p class="small mt">
+        構成: GitHub Pages（UI） + Google Apps Script + スプレッドシート（DB） + fly.io（MQTT 中継）
+      </p>
+      <p class="small mt" style="color:var(--text-mute); font-size:11px; letter-spacing:0.04em;">
+        Made for <strong>BASSDRUM</strong> by <strong>TELEPHONOVISION</strong>
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<footer style="text-align:center; padding:24px 16px 8px; color:#bbb; font-size:11px; letter-spacing:0.05em;">
+  BD Bambu Share by <strong style="color:#aaa;">TELEPHONOVISION</strong>
+</footer>
+
+<script>
+// ============================================================
+// 設定
+// ============================================================
+const DEFAULT_API_URL = "https://script.google.com/macros/s/AKfycbwmN-iQPRrW4mp52VMSR6YlXjnn_j4hujPmFnA-YopLBmVrD1pCV1SnEdqH8rRZzIVg/exec";
+
+// ============================================================
+// 状態
+// ============================================================
+const state = {
+  apiUrl: localStorage.getItem('bambu_api_url') || DEFAULT_API_URL,
+  user: null,
+  printers: [],
+  twofaPolling: null,
+};
+
+// ============================================================
+// API クライアント
+// ============================================================
+async function apiCall(action, params = {}) {
+  if (!state.apiUrl || state.apiUrl.includes('PASTE_YOUR')) {
+    throw new Error('API URLが未設定です。設定タブから入力してください。');
+  }
+  const url = new URL(state.apiUrl);
+  url.searchParams.set('action', action);
+  if (state.user && state.user.email) {
+    url.searchParams.set('user_email', state.user.email);
+  }
+  Object.entries(params).forEach(([k, v]) => {
+    if (v !== undefined && v !== null && v !== '') {
+      url.searchParams.set(k, v);
+    }
+  });
+
+  const res = await fetch(url, { method: 'GET', redirect: 'follow' });
+  if (!res.ok) throw new Error('HTTPエラー: ' + res.status);
+  const json = await res.json();
+  if (!json.ok) throw new Error(json.error || '不明なエラー');
+  return json;
+}
+
+// ============================================================
+// UI ヘルパー
+// ============================================================
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => { t.classList.remove('show'); }, 2800);
+}
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
+function formatDateTime(s) {
+  if (!s) return '';
+  const d = new Date(s);
+  if (isNaN(d.getTime())) return s;
+  const now = new Date();
+  const sameDay = d.toDateString() === now.toDateString();
+  const opts = sameDay
+    ? { hour: '2-digit', minute: '2-digit' }
+    : { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+  return d.toLocaleString('ja-JP', opts);
+}
+
+function relativeTime(s) {
+  if (!s) return '';
+  const d = new Date(s);
+  if (isNaN(d.getTime())) return s;
+  const diff = (Date.now() - d.getTime()) / 1000;
+  if (diff < 60) return Math.floor(diff) + '秒前';
+  if (diff < 3600) return Math.floor(diff / 60) + '分前';
+  if (diff < 86400) return Math.floor(diff / 3600) + '時間前';
+  if (diff < 604800) return Math.floor(diff / 86400) + '日前';
+  return formatDateTime(s);
+}
+
+let dashboardInterval = null;
+
+function showSection(name) {
+  document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+  document.getElementById(name).classList.add('active');
+  document.querySelectorAll('nav.tabs button').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === name);
+  });
+  // ダッシュボード以外に遷移したら自動更新を止める
+  if (dashboardInterval) {
+    clearInterval(dashboardInterval);
+    dashboardInterval = null;
+  }
+  if (name === 'dashboard') {
+    loadDashboard();
+    // 10秒ごとに自動更新
+    dashboardInterval = setInterval(loadDashboard, 10000);
+  }
+  if (name === 'reservations') loadReservations();
+  if (name === 'maintenance') loadMaintenance();
+  if (name === 'messages') loadMessages();
+  if (name === 'settings') renderSettings();
+}
+
+// ============================================================
+// ログイン
+// ============================================================
+async function login(email) {
+  email = email.trim().toLowerCase();
+  if (!email) return;
+  try {
+    const res = await apiCall('whoami', { user_email: email });
+    if (!res.registered) {
+      document.getElementById('login-msg').innerHTML = '未登録のメールです。<strong>下の「初めての方 — 新規登録」</strong>から登録してください。';
+      return;
+    }
+    state.user = res.user;
+    localStorage.setItem('bambu_user_email', email);
+    onLoggedIn();
+  } catch (e) {
+    document.getElementById('login-msg').textContent = 'エラー: ' + e.message;
+  }
+}
+
+function onLoggedIn() {
+  document.getElementById('user-info').innerHTML =
+    `<span class="name">${escapeHtml(state.user.name)}</span><span class="role">${escapeHtml(state.user.role)}</span>`;
+  document.getElementById('tabs').style.display = 'flex';
+  showSection('dashboard');
+  loadPrintersForSelects();
+}
+
+function logout() {
+  state.user = null;
+  localStorage.removeItem('bambu_user_email');
+  document.getElementById('user-info').textContent = '未ログイン';
+  document.getElementById('tabs').style.display = 'none';
+  showSection('login');
+}
+
+// ============================================================
+// プリンタ
+// ============================================================
+async function loadDashboard() {
+  try {
+    const res = await apiCall('printers');
+    state.printers = res.printers;
+    renderPrinters(res.printers);
+    loadDashboardMessages();
+  } catch (e) {
+    document.getElementById('printer-grid').innerHTML =
+      `<div class="empty">エラー: ${escapeHtml(e.message)}</div>`;
+  }
+}
+
+function renderPrinters(printers) {
+  const grid = document.getElementById('printer-grid');
+  if (!printers.length) {
+    grid.innerHTML = '<div class="empty">プリンタが登録されていません</div>';
+    return;
+  }
+
+  // Group by location
+  const groups = {};
+  printers.forEach(p => {
+    const loc = p.location || '未設定';
+    if (!groups[loc]) groups[loc] = [];
+    groups[loc].push(p);
+  });
+  // Order: Tokyo first, then Kyoto, then others
+  const sortedLocs = Object.keys(groups).sort((a, b) => {
+    const order = { '乃木坂オフィス': 0, '京都オフィス': 1 };
+    const oa = order[a] !== undefined ? order[a] : 99;
+    const ob = order[b] !== undefined ? order[b] : 99;
+    if (oa !== ob) return oa - ob;
+    return a.localeCompare(b);
+  });
+
+  grid.innerHTML = sortedLocs.map(loc => {
+    const cards = groups[loc].map(p => renderPrinterCard(p)).join('');
+    return `
+      <div class="location-group">
+        <div class="location-header"><span class="pin">${escapeHtml(loc)}</span><span class="count">${groups[loc].length}台</span></div>
+        <div class="printer-grid">${cards}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderPrinterCard(p) {
+  const stateClass = `state-${p.state || 'unknown'}`;
+  let stateLabel = {
+    idle: '待機', printing: '印刷中', paused: '一時停止',
+    error: 'エラー', offline: 'オフライン', unknown: '不明'
+  }[p.state] || p.state;
+  // 印刷物が回収されていない時は「回収待ち」を優先表示
+  if (p.needs_clearing && p.state !== 'printing') {
+    stateLabel = '回収待ち';
+  }
+  let cardClass = 'printer-card';
+  if (p.state === 'printing') cardClass += ' printing';
+  if (p.needs_clearing) cardClass += ' needs-clearing';
+  if (p.manual_in_use) cardClass += ' in-use';
+  else if (p.state === 'error') cardClass += ' error';
+
+  const inUseNote = p.manual_in_use
+    ? `<div class="note-line use"><span class="marker">使用中</span> ${escapeHtml(p.current_user)}</div>`
+    : '';
+  const inUseStamp = p.manual_in_use
+    ? `<div class="in-use-stamp">
+         <div class="stamp-label"><span class="stamp-dot"></span>USING NOW</div>
+         <div class="stamp-name">${escapeHtml(p.current_user)}</div>
+       </div>`
+    : '';
+  const reservedNote = p.reserved_now_by
+    ? `<div class="note-line reserved"><span class="marker">予約中</span> ${escapeHtml(p.reserved_now_by)} 〜 ${formatDateTime(p.reservation_end)}</div>`
+    : '';
+  const upcomingNote = p.next_reservation_start
+    ? `<div class="note-line upcoming">次の予約: ${formatDateTime(p.next_reservation_start)}</div>`
+    : '';
+  // 終了予定時刻を計算
+  const remainingMin = Number(p.remaining_min) || 0;
+  const etaBlock = (p.state === 'printing' && remainingMin > 0)
+    ? (() => {
+        const finish = new Date(Date.now() + remainingMin * 60000);
+        const hh = String(finish.getHours()).padStart(2, '0');
+        const mm = String(finish.getMinutes()).padStart(2, '0');
+        const sameDay = finish.toDateString() === new Date().toDateString();
+        const dateLabel = sameDay ? '' : ` (${finish.getMonth()+1}/${finish.getDate()})`;
+        return `<div class="printing-eta">
+          <span><span class="label">FINISH</span><span class="time">${hh}:${mm}${dateLabel}</span></span>
+          <span class="remain">あと ${remainingMin}分</span>
+        </div>`;
+      })()
+    : '';
+  const progressBar = p.state === 'printing'
+    ? `${etaBlock}<div class="progress-bar"><div class="progress-fill" style="width:${p.progress}%;"></div></div>
+       <div class="small">進捗 <strong>${p.progress}%</strong></div>`
+    : '';
+  const tempInfo = (p.bed_temp || p.nozzle_temp)
+    ? `<div class="status-row">
+         <div>ベッド <strong>${p.bed_temp}°C</strong></div>
+         <div>ノズル <strong>${p.nozzle_temp}°C</strong></div>
+       </div>`
+    : '';
+  const filamentInfo = p.filament
+    ? `<div class="small">フィラメント: <strong>${escapeHtml(p.filament)}</strong></div>`
+    : '';
+  const updatedNote = p.updated_at
+    ? `<div class="note-line updated">更新: ${relativeTime(p.updated_at)}</div>`
+    : '';
+
+  const useBtn = p.manual_in_use
+    ? `<button class="btn btn-sub btn-sm" onclick="toggleInUse('${p.printer_id}', false)">使い終わった</button>`
+    : `<button class="btn btn-yellow btn-sm" onclick="toggleInUse('${p.printer_id}', true)">これを使う</button>`;
+
+  // 回収待ちバナー
+  const clearingBanner = (p.needs_clearing && p.state !== 'printing')
+    ? `<div class="clearing-warning">印刷物の回収待ち — 「使い終わった」を押してください</div>`
+    : '';
+
+  return `
+    <div class="${cardClass}">
+      ${inUseStamp}
+      <div class="printer-head">
+        <div class="printer-name">${escapeHtml(p.name)}</div>
+        <span class="state-badge ${stateClass}">${escapeHtml(stateLabel)}</span>
+      </div>
+      <div class="printer-model">
+        <span class="bambu-tag">Bambu</span> <span class="model-name">${escapeHtml(p.model)}</span>
+      </div>
+      ${clearingBanner}
+      ${inUseNote}
+      ${reservedNote}
+      ${upcomingNote}
+      ${progressBar}
+      ${tempInfo}
+      ${filamentInfo}
+      ${updatedNote}
+      <div class="printer-actions">
+        ${useBtn}
+        <button class="btn btn-sub btn-sm" onclick="openStatusEdit('${p.printer_id}')">状態更新</button>
+      </div>
+    </div>
+  `;
+}
+
+async function toggleInUse(printerId, inUse) {
+  try {
+    await apiCall('mark_in_use', { printer_id: printerId, in_use: inUse });
+    showToast(inUse ? '使用中にしました' : '使い終わりに更新しました', 'success');
+    loadDashboard();
+  } catch (e) {
+    showToast('エラー: ' + e.message, 'error');
+  }
+}
+
+async function openStatusEdit(printerId) {
+  const p = state.printers.find(x => String(x.printer_id) === String(printerId));
+  if (!p) return;
+  const newState = prompt(
+    `${p.name} の状態を更新\n\nidle / printing / paused / error / offline のいずれか:`,
+    p.state
+  );
+  if (!newState) return;
+  let progress = '';
+  if (newState === 'printing') {
+    progress = prompt('進捗 (0-100):', p.progress || 0) || '';
+  }
+  const filament = prompt('フィラメント (種類・色):', p.filament || '') || '';
+  try {
+    await apiCall('update_status', {
+      printer_id: printerId,
+      state: newState,
+      progress: progress,
+      filament: filament,
+    });
+    showToast('状態を更新しました', 'success');
+    loadDashboard();
+  } catch (e) {
+    showToast('エラー: ' + e.message, 'error');
+  }
+}
+
+async function loadPrintersForSelects() {
+  try {
+    const res = await apiCall('printers');
+    const printers = res.printers;
+    ['res-printer', 'maint-printer', 'msg-printer', 'maint-filter'].forEach(id => {
+      const sel = document.getElementById(id);
+      if (!sel) return;
+      const isOptional = (id === 'msg-printer' || id === 'maint-filter');
+      const baseHtml = isOptional ? '<option value="">' + (id === 'msg-printer' ? '全体' : '全て') + '</option>' : '';
+      sel.innerHTML = baseHtml + printers.map(p =>
+        `<option value="${p.printer_id}">${escapeHtml(p.name)}${p.location ? ' / ' + escapeHtml(p.location) : ''}</option>`).join('');
+    });
+  } catch (e) {
+    console.warn('select更新失敗:', e);
+  }
+}
+
+// ============================================================
+// 予約
+// ============================================================
+async function loadReservations() {
+  try {
+    const res = await apiCall('reservations');
+    renderReservations(res.reservations);
+  } catch (e) {
+    document.getElementById('res-list').innerHTML =
+      `<div class="empty">エラー: ${escapeHtml(e.message)}</div>`;
+  }
+}
+
+function renderReservations(rows) {
+  const list = document.getElementById('res-list');
+  if (!rows.length) {
+    list.innerHTML = '<div class="empty">予約はありません</div>';
+    return;
+  }
+  rows.sort((a, b) => new Date(a.start_at) - new Date(b.start_at));
+  const printerName = id => {
+    const p = state.printers.find(x => String(x.printer_id) === String(id));
+    return p ? p.name : `printer_${id}`;
+  };
+  const myEmail = state.user.email.toLowerCase();
+  list.innerHTML = rows.map(r => {
+    const isMine = String(r.user_email).toLowerCase() === myEmail;
+    const cancelBtn = (isMine || state.user.role === 'admin')
+      ? `<button class="btn btn-sub btn-sm" onclick="cancelReservation('${r.id}')">キャンセル</button>`
+      : '';
+    return `
+      <div class="reservation-item">
+        <div class="info">
+          <div class="printer"><span class="marker">${escapeHtml(printerName(r.printer_id))}</span></div>
+          <div class="time">${formatDateTime(r.start_at)} 〜 ${formatDateTime(r.end_at)}</div>
+          <div class="small mt">${escapeHtml(r.user_name || r.user_email)}${r.purpose ? ' / ' + escapeHtml(r.purpose) : ''}</div>
+        </div>
+        ${cancelBtn}
+      </div>
+    `;
+  }).join('');
+}
+
+async function createReservation() {
+  const printerId = document.getElementById('res-printer').value;
+  const startStr = document.getElementById('res-start').value;
+  const endStr = document.getElementById('res-end').value;
+  const purpose = document.getElementById('res-purpose').value;
+  if (!printerId || !startStr || !endStr) {
+    showToast('プリンタ・開始・終了は必須です', 'error');
+    return;
+  }
+  try {
+    const res = await apiCall('create_reservation', {
+      printer_id: printerId,
+      start_at: startStr,
+      end_at: endStr,
+      purpose: purpose,
+    });
+    if (!res.ok) {
+      showToast(res.error || '予約失敗', 'error');
+      return;
+    }
+    showToast('予約しました', 'success');
+    document.getElementById('res-purpose').value = '';
+    loadReservations();
+  } catch (e) {
+    showToast('エラー: ' + e.message, 'error');
+  }
+}
+
+async function cancelReservation(id) {
+  if (!confirm('この予約をキャンセルしますか？')) return;
+  try {
+    await apiCall('cancel_reservation', { id: id });
+    showToast('キャンセルしました', 'success');
+    loadReservations();
+  } catch (e) {
+    showToast('エラー: ' + e.message, 'error');
+  }
+}
+
+// ============================================================
+// メンテ
+// ============================================================
+async function loadMaintenance() {
+  const filterPrinterId = document.getElementById('maint-filter').value;
+  try {
+    const res = await apiCall('maintenance_logs', { printer_id: filterPrinterId });
+    renderMaintenance(res.logs);
+  } catch (e) {
+    document.getElementById('maint-list').innerHTML =
+      `<div class="empty">エラー: ${escapeHtml(e.message)}</div>`;
+  }
+}
+
+function renderMaintenance(logs) {
+  const list = document.getElementById('maint-list');
+  if (!logs.length) {
+    list.innerHTML = '<div class="empty">記録はまだありません</div>';
+    return;
+  }
+  const typeLabels = {
+    nozzle_clean: 'ノズル清掃', nozzle_replace: 'ノズル交換',
+    bed_adjust: 'ベッド調整', filament_change: 'フィラメント交換',
+    lubrication: '注油', other: 'その他',
+  };
+  const printerName = id => {
+    const p = state.printers.find(x => String(x.printer_id) === String(id));
+    return p ? p.name : `printer_${id}`;
+  };
+  list.innerHTML = logs.map(l => `
+    <div class="timeline-item cat-maintenance">
+      <div class="timeline-meta">
+        <span class="badge yellow">${escapeHtml(printerName(l.printer_id))}</span>
+        <span class="badge">${escapeHtml(typeLabels[l.type] || l.type)}</span>
+        <span>${escapeHtml(l.user_name || l.user_email)}</span>
+        <span>${relativeTime(l.created_at)}</span>
+      </div>
+      <div class="timeline-body">${escapeHtml(l.note)}</div>
+    </div>
+  `).join('');
+}
+
+async function addMaintenance() {
+  const printerId = document.getElementById('maint-printer').value;
+  const type = document.getElementById('maint-type').value;
+  const note = document.getElementById('maint-note').value;
+  if (!printerId) { showToast('プリンタを選択してください', 'error'); return; }
+  if (!note.trim()) { showToast('メモを入力してください', 'error'); return; }
+  try {
+    await apiCall('add_maintenance', { printer_id: printerId, type: type, note: note });
+    showToast('記録しました', 'success');
+    document.getElementById('maint-note').value = '';
+    loadMaintenance();
+  } catch (e) {
+    showToast('エラー: ' + e.message, 'error');
+  }
+}
+
+// ============================================================
+// 連絡帳
+// ============================================================
+async function loadMessages() {
+  try {
+    const res = await apiCall('messages');
+    renderMessages(res.messages, 'msg-list');
+  } catch (e) {
+    document.getElementById('msg-list').innerHTML =
+      `<div class="empty">エラー: ${escapeHtml(e.message)}</div>`;
+  }
+}
+
+async function loadDashboardMessages() {
+  try {
+    const res = await apiCall('messages');
+    const top = res.messages.slice(0, 5);
+    renderMessages(top, 'dashboard-messages');
+  } catch (e) {
+    document.getElementById('dashboard-messages').innerHTML = '';
+  }
+}
+
+function renderMessages(msgs, targetId) {
+  const list = document.getElementById(targetId);
+  if (!msgs.length) {
+    list.innerHTML = '<div class="empty small">メッセージはまだありません</div>';
+    return;
+  }
+  const catLabels = { info: '情報', filament: 'フィラメント', maintenance: 'メンテ依頼', urgent: '緊急' };
+  const printerName = id => {
+    const p = state.printers.find(x => String(x.printer_id) === String(id));
+    return p ? p.name : '';
+  };
+  list.innerHTML = msgs.map(m => {
+    const pName = m.printer_id ? printerName(m.printer_id) : '';
+    return `
+      <div class="timeline-item cat-${escapeHtml(m.category)}">
+        <div class="timeline-meta">
+          <span class="badge ${m.category === 'urgent' ? '' : 'yellow'}">${escapeHtml(catLabels[m.category] || m.category)}</span>
+          ${pName ? `<span class="badge">${escapeHtml(pName)}</span>` : ''}
+          <span>${escapeHtml(m.user_name || m.user_email)}</span>
+          <span>${relativeTime(m.created_at)}</span>
+        </div>
+        <div class="timeline-body">${escapeHtml(m.body)}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function postMessage() {
+  const category = document.getElementById('msg-category').value;
+  const printerId = document.getElementById('msg-printer').value;
+  const body = document.getElementById('msg-body').value;
+  if (!body.trim()) { showToast('本文を入力してください', 'error'); return; }
+  try {
+    await apiCall('post_message', {
+      category: category,
+      printer_id: printerId,
+      scope: printerId ? 'printer' : 'global',
+      body: body,
+    });
+    showToast('投稿しました', 'success');
+    document.getElementById('msg-body').value = '';
+    loadMessages();
+  } catch (e) {
+    showToast('エラー: ' + e.message, 'error');
+  }
+}
+
+// ============================================================
+// 2FA
+// ============================================================
+async function request2FA() {
+  if (state.twofaPolling) {
+    clearInterval(state.twofaPolling);
+    state.twofaPolling = null;
+  }
+  const result = document.getElementById('twofa-result');
+  result.innerHTML = `
+    <div class="panel">
+      <div class="twofa-status"><span class="spinner"></span>確認コードを待っています…</div>
+      <div class="small mt center" style="color:var(--text-dim);">最大5分待機します。Bambu Studio で「コード送信」を押してください。</div>
+    </div>
+  `;
+  try {
+    const res = await apiCall('request_2fa');
+    const requestId = res.request_id;
+    let elapsed = 0;
+    state.twofaPolling = setInterval(async () => {
+      elapsed += 5;
+      try {
+        const poll = await apiCall('poll_2fa', { request_id: requestId });
+        if (poll.status === 'done' && poll.code) {
+          clearInterval(state.twofaPolling);
+          state.twofaPolling = null;
+          result.innerHTML = `
+            <div class="panel">
+              <div class="twofa-status">✓ コードを取得しました</div>
+              <div class="twofa-code" id="twofa-code">${escapeHtml(poll.code)}</div>
+              <div class="row" style="justify-content:center;">
+                <button class="btn btn-sub btn-sm" onclick="copyCode('${poll.code}')">コードをコピー</button>
+              </div>
+              <div class="small center mt">受信時刻: ${escapeHtml(poll.code_received_at || '')}</div>
+            </div>
+          `;
+        } else if (poll.status === 'timeout') {
+          clearInterval(state.twofaPolling);
+          state.twofaPolling = null;
+          result.innerHTML = `
+            <div class="panel">
+              <div class="twofa-status" style="color:var(--red);">⏱ タイムアウト</div>
+              <div class="small center mt">5分以内に新しいコードが届きませんでした。<br>もう一度試してください。</div>
+            </div>
+          `;
+        } else {
+          result.querySelector('.twofa-status').innerHTML =
+            `<span class="spinner"></span>確認コードを待っています… (${elapsed}秒)`;
+        }
+      } catch (e) {
+        console.warn('2FA poll error:', e);
+      }
+    }, 5000);
+  } catch (e) {
+    result.innerHTML = `<div class="panel"><div class="twofa-status" style="color:var(--red);">エラー: ${escapeHtml(e.message)}</div></div>`;
+  }
+}
+
+function copyCode(code) {
+  navigator.clipboard.writeText(code).then(() => {
+    showToast('コードをコピーしました', 'success');
+  }).catch(() => {
+    showToast('コピーに失敗しました', 'error');
+  });
+}
+
+// ============================================================
+// 設定
+// ============================================================
+function renderSettings() {
+  const u = state.user;
+  document.getElementById('settings-info').innerHTML = `
+    メール: <strong>${escapeHtml(u.email)}</strong><br>
+    権限: <strong>${escapeHtml(u.role)}</strong>
+  `;
+  document.getElementById('settings-name').value = u.name || '';
+  document.getElementById('settings-api-url').value = state.apiUrl || '';
+}
+
+async function saveDisplayName() {
+  const newName = document.getElementById('settings-name').value.trim();
+  if (!newName) { showToast('名前を入力してください', 'error'); return; }
+  if (newName === state.user.name) { showToast('変更ありません'); return; }
+  try {
+    await apiCall('update_user', { name: newName });
+    state.user.name = newName;
+    onLoggedIn();  // ヘッダー再描画
+    showSection('settings');
+    showToast('名前を更新しました', 'success');
+  } catch (e) {
+    showToast('エラー: ' + e.message, 'error');
+  }
+}
+
+function saveApiUrl() {
+  const url = document.getElementById('settings-api-url').value.trim();
+  if (!url) return;
+  state.apiUrl = url;
+  localStorage.setItem('bambu_api_url', url);
+  showToast('保存しました', 'success');
+}
+
+// ============================================================
+// 起動
+// ============================================================
+function init() {
+  document.querySelectorAll('nav.tabs button').forEach(b => {
+    b.addEventListener('click', () => showSection(b.dataset.tab));
+  });
+
+  document.getElementById('btn-login').addEventListener('click',
+    () => login(document.getElementById('login-email').value));
+  document.getElementById('login-email').addEventListener('keydown',
+    e => { if (e.key === 'Enter') login(e.target.value); });
+  document.getElementById('btn-register').addEventListener('click', async () => {
+    const email = document.getElementById('reg-email').value.trim();
+    const name = document.getElementById('reg-name').value.trim();
+    if (!email || !name) { showToast('メールアドレスと表示名は必須です', 'error'); return; }
+    if (!email.includes('@')) { showToast('メールアドレスの形式が不正です', 'error'); return; }
+    try {
+      const res = await apiCall('register_user', { email: email, name: name });
+      if (res.already_registered) {
+        showToast('既に登録済みです。ログインします', 'success');
+      } else {
+        showToast('登録完了！ログインします', 'success');
+      }
+      document.getElementById('login-email').value = email;
+      login(email);
+    } catch (e) {
+      showToast('エラー: ' + e.message, 'error');
+    }
+  });
+  document.getElementById('btn-refresh').addEventListener('click', loadDashboard);
+  document.getElementById('btn-create-res').addEventListener('click', createReservation);
+  document.getElementById('btn-add-maint').addEventListener('click', addMaintenance);
+  document.getElementById('btn-post-msg').addEventListener('click', postMessage);
+  document.getElementById('btn-request-2fa').addEventListener('click', request2FA);
+  document.getElementById('btn-logout').addEventListener('click', logout);
+  document.getElementById('btn-save-api-url').addEventListener('click', saveApiUrl);
+  document.getElementById('btn-save-name').addEventListener('click', saveDisplayName);
+  document.getElementById('maint-filter').addEventListener('change', loadMaintenance);
+
+  const savedEmail = localStorage.getItem('bambu_user_email');
+  if (savedEmail && state.apiUrl && !state.apiUrl.includes('PASTE_YOUR')) {
+    login(savedEmail);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>
