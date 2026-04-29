@@ -315,6 +315,56 @@ li { font-size: 15px; line-height: 1.9; }
 .mock-btn.sub { background: var(--bg); color: var(--text); }
 .mock-btn.disabled { background: var(--bg); color: var(--text-mute); border-color: var(--text-mute); opacity: 0.6; }
 
+.mock-panel {
+  background: var(--card);
+  border: 2px solid var(--text);
+  padding: 20px 22px;
+  box-shadow: 4px 4px 0 var(--text);
+  border-radius: 0;
+}
+.mock-panel h4 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 800;
+}
+.mock-panel p { font-size: 12px; color: var(--text-dim); margin: 0 0 12px; line-height: 1.6; }
+.mock-panel ol { font-size: 11px; color: var(--text-dim); padding-left: 18px; margin: 0 0 14px; line-height: 1.7; }
+.mock-panel .full-btn {
+  display: block;
+  background: var(--yellow);
+  color: var(--text);
+  border: 2px solid var(--text);
+  padding: 10px 12px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 13px;
+  box-shadow: 3px 3px 0 var(--text);
+}
+.mock-twofa-result {
+  margin-top: 14px;
+  padding: 16px;
+  background: var(--yellow);
+  border: 2px solid var(--text);
+  text-align: center;
+}
+.mock-twofa-result .label {
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.mock-twofa-result .code {
+  font-family: monospace;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+}
+.mock-twofa-result .note {
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
 .tip {
   background: var(--bg-elev);
   border-left: 4px solid var(--yellow);
@@ -591,6 +641,7 @@ footer {
   <span class="step-num">STEP 8</span>
   <h2>Bambu Studio<span class="highlight">2FAコード取得</span></h2>
   <p>Bambu Studio に共有アカウントで初回ログインする時、確認コードがメールで届きます。共有Gmailにアクセス権がない人でも、このツールでコードを取得できます。</p>
+
   <ol>
     <li>Bambu Studio で共有アカウントの ID/パスワードを入力</li>
     <li>「コードを送信」が押されると、共有Gmail（demachigadget@gmail.com）にコードが届く</li>
@@ -598,6 +649,37 @@ footer {
     <li>5秒ごとに自動で受信箱を監視 → コードを画面に表示</li>
     <li>表示された6桁を Bambu Studio に貼り付け → ログイン完了</li>
   </ol>
+
+  <h3>① ボタンを押す前</h3>
+  <div class="mockup">
+    <span class="mockup-label">BEFORE FETCH</span>
+    <div class="mock-panel">
+      <h4>📧 Bambu Studio 2FAコード取得</h4>
+      <p>Bambu Studio に共有アカウントで初回ログインするとき、共有Gmail に届く確認コードをここで取得できます。</p>
+      <ol>
+        <li>Bambu Studio で共有アカウントの ID/パスワードを入力</li>
+        <li>Bambu が確認コードを送信したら、下のボタンを押す</li>
+        <li>表示されたコードを Bambu Studio に貼り付け</li>
+      </ol>
+      <span class="full-btn">確認コードを取得</span>
+    </div>
+  </div>
+
+  <h3>② ボタンを押した後（コード受信）</h3>
+  <div class="mockup">
+    <span class="mockup-label">CODE RECEIVED</span>
+    <div class="mock-panel">
+      <h4>📧 Bambu Studio 2FAコード取得</h4>
+      <p>5秒おきに共有Gmail を自動監視中…</p>
+      <span class="full-btn">確認コードを取得</span>
+      <div class="mock-twofa-result">
+        <div class="label">届いたコード</div>
+        <div class="code">287413</div>
+        <div class="note">Bambu Studio に貼り付けてください</div>
+      </div>
+    </div>
+  </div>
+
   <div class="tip">
     <strong>注意</strong>: 2FAコードは数分で期限切れます。サクッと貼り付けてください。
   </div>
