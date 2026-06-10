@@ -1283,7 +1283,7 @@ function renderPrinterCard(p) {
        </div>`
     : '';
   const filamentInfo = p.filament
-    ? `<div class="small">フィラメント: <strong>${escapeHtml(p.filament)}</strong></div>`
+    ? `<div class="small">プロジェクト: <strong>${escapeHtml(p.filament)}</strong></div>`
     : '';
   const updatedNote = p.updated_at
     ? `<div class="note-line updated">更新: ${relativeTime(p.updated_at)}</div>`
@@ -1346,7 +1346,7 @@ async function openStatusEdit(printerId) {
   if (newState === 'printing') {
     progress = prompt('進捗 (0-100):', p.progress || 0) || '';
   }
-  const filament = prompt('フィラメント (種類・色):', p.filament || '') || '';
+  const filament = prompt('プロジェクト名:', p.filament || '') || '';
   try {
     await apiCall('update_status', {
       printer_id: printerId,
@@ -1467,7 +1467,7 @@ async function loadMaintenance() {
   const filterPrinterId = document.getElementById('maint-filter').value;
   try {
     const res = await apiCall('maintenance_logs', { printer_id: filterPrinterId });
-    renderMaintenance(res.logs);
+    renderMaintenance(sortByCreatedDesc(res.logs));
   } catch (e) {
     document.getElementById('maint-list').innerHTML =
       `<div class="empty">エラー: ${escapeHtml(e.message)}</div>`;
@@ -1521,10 +1521,14 @@ async function addMaintenance() {
 // ============================================================
 // 連絡帳
 // ============================================================
+function sortByCreatedDesc(arr) {
+  return arr.slice().sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)));
+}
+
 async function loadMessages() {
   try {
     const res = await apiCall('messages');
-    renderMessages(res.messages, 'msg-list');
+    renderMessages(sortByCreatedDesc(res.messages), 'msg-list');
   } catch (e) {
     document.getElementById('msg-list').innerHTML =
       `<div class="empty">エラー: ${escapeHtml(e.message)}</div>`;
@@ -1534,7 +1538,7 @@ async function loadMessages() {
 async function loadDashboardMessages() {
   try {
     const res = await apiCall('messages');
-    const top = res.messages.slice(0, 5);
+    const top = sortByCreatedDesc(res.messages).slice(0, 5);
     renderMessages(top, 'dashboard-messages');
   } catch (e) {
     document.getElementById('dashboard-messages').innerHTML = '';
